@@ -1,0 +1,67 @@
+= NOTE
+:toc:
+:icons: font
+
+== Anotation
+
+// [cols=3*] 컬럼 지정
+// [%header,format=csv] 테이블 포맷팅변환
+// [cols="1,5a,1"] 컬럼 너비지정 및 asciidoc 컨텐츠 추가(a)
+
+=== Controller
+[cols="1,5a,1"]
+.Controller
+|===
+| 이름 | 용도 | 경로
+
+| @Controller
+| 해당 어노테이션의 클래스가 컨트롤러의 기능을 수행
+| org.springframework.stereotype.Controller
+
+| @GetMapping(`URL명`)
+| 위 경로로 URL요청이 발생하면 해당 어노테이션의 메서드가 실행, 경로와 메서드를 매핑footnote:[URL명과 메서드명은 동일할 필요는 없다]footnote:[Get방식의 요청은 GetMapping, Post방식의 요청은 PostMapping]
+| org.springframework.web.bind.annotation.GetMapping
+
+| @ResponseBody
+| return body 만들어서 보낼때 사용
+| org.springframework.web.bind.annotation.ResponseBody
+
+| @Getterfootnoteref:[lombok,required: lombok]
+| Getter 메서드를 추가하지않아도 `get변수명`(파스칼표기)을 사용할수있다.
+| lombok.Getter
+
+| @Setterfootnoteref:[lombok]
+| Setter 메서드를 추가하지않아도 `set변수명`(파스칼표기) 사용할수있다.
+| lombok.Setter
+
+| @RequiredArgsConstructor footnoteref:[lombok]
+| 해당 속성을 필요로하는 생성자가 롬복에 의해 자동으로 생성된다._**(final이 없는 속성은 생성자에 포함되지않는다.)**_
+| lombok.RequiredArgsConstructor
+
+
+|===
+
+== Library
+Spring Boot Devtools::
+* 서버 재시작 없이도 코드변경사항을 적용해준다.
+* dependencies
+** developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+lombok(롬복)footnote:[plugin설치,File->Settings->Build,Exceution,Deployment->Compiler+->Annotation Processors에서 Enable annotation processing 체크]::
+* 자바 클래스에 Getter, Setter, 생성자 등을 자동으로 만들어주는도구이다.
+* dependencies
+** compileOnlyfootnote:[해당 라이브러리가 컴파일 단계에서만 필요한 경우에 사용한다.] 'org.projectlombok:lombok'
+** annotationProcessorfootnote:[컴파일 단계에서 어노테이션을 분석하고 처리하기 위해 사용한다.] 'org.projectlombok:lombok'
+
+
+== Struct
+
+src/main/java 디렉터리::
+link:src/main/java/[src/main/java 디렉터리]의 `com.mysite.sbb` 패키지는 **자바파일을 작성하는 공간**이다. +
+자바 파일로는 link:src/main/java/com/example/sbb/HelloController.java[HelloController]와 같은 스프링부트의 *컨트롤러*, *폼과 DTO*, *데이터베이스 처리를 위한 엔티티*, *서비스 파일* 등이있다.
+
+
+SbbApplication.java 파일::
+시작을 담당하는 파일이다. link:src/main/java/com/example/sbb/SbbApplication.java[<프로젝트명>+Application.java] +
+스프링부트 프로젝트를 생성할때 "Sbb"라는 이름을 사용하면 다음과같은 SbbApplication.java 파일이 자동으로 생성된다.
+
