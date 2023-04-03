@@ -204,6 +204,29 @@ annotationProcessorfootnote:[컴파일 단계에서 어노테이션을 분석하
 ====
 
 
+tibero::
+* dependencies
++
+====
+implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4'
+====
+
++
+
+* application.properties
++
+====
+#tibero setting
+spring.datasource.url=*jdbc:tibero:thin:@[host]:[port]:[DB Name]*
+spring.datasource.username=*[account]*
+spring.datasource.password=*[password]*
+spring.datasource.driver-class-name=com.tmax.tibero.jdbc.TbDriver
+
+#mybatis setting
+mybatis.config-location=classpath:mybatis-config.xml
+mybatis.mapper-locations=mappers/*.xml
+====
+
 == Struct
 
 src/main/java 디렉터리::
