@@ -9,7 +9,7 @@
 // [cols="1,5a,1"] 컬럼 너비지정 및 asciidoc 컨텐츠 추가(a)
 
 === Controller
-[cols="1,5a,1"]
+[cols="1,5,1"]
 .Controller
 |===
 | 이름 | 용도 | 경로
@@ -65,3 +65,43 @@ SbbApplication.java 파일::
 시작을 담당하는 파일이다. link:src/main/java/com/example/sbb/SbbApplication.java[<프로젝트명>+Application.java] +
 스프링부트 프로젝트를 생성할때 "Sbb"라는 이름을 사용하면 다음과같은 SbbApplication.java 파일이 자동으로 생성된다.
 
+[source,java]
+----
+package com.mysite.sbb;
+
+import org.springframework.boot.SpringAcpplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SbbApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SbbApplication.class, args);
+    }
+}
+----
+SbbApplication 클래스에는 위와 같이 반드시 `@SpringBootApplication` 어노테이션이 적용되어야한다. +
+@SpringBootApplication 어노테이션을 통해 스프링부트의 모든 설정이 관리된다.
+
+src/main/resources 디렉터리::
+link:src/main/resources[src/main/resource 디렉터리]는 자바 파일을 제외한 HTML, CSS, Javascript, 환경파일 등을 작성하는 공간이다.
+
+templates 디렉터리::
+link:src/main/resources/templates/[src/main/resources/templates 디렉터리]에는 템플릿 파일을 저장한다. +
+템플릿 파일은 HTML 파일 형태로 자바 객체와 연동되는 파일이다. +
+templates 디렉터리에는 SBB의 질문 목록, 질문 상세등의 HTML 파일을 저장한다.
+
+static 디렉터리::
+link:src/main/resources/static/[static 디렉터리]는 SBB 프로젝트의 스트일시트(.css) 자바 스크립트(.js) 그리고 이미지 파일 (.jpg, png) 등을 저장하는 공간이다.
+
+application.properties 파일::
+application.properties 파일은 SBB 프로젝트의 환경을 설정한다. SBB 프로젝트의 환경, 데이터베이스 등의 설정을 이파일에 저장한다.
+
+src/test/java 디렉터리::
+link:src/test/java/[src/test/java 디렉터리]는 SBB 프로젝트에서 작성한 파일을 테스트하기 위한 테스트 코드를 작성하는 공간이다. +
+JUint과 스프링부트의 테스팅 도구를 사용하여 서버를 실행하지 않은 상태에서 src/main/java 디렉터리에 작성한 코드를 테스트할 수 있다.
+
+build.gradle 파일::
+그레이들(Gradle)이 사용하는 환경 파일이다. 그레이들은 그루비(Groovy)를 기반으로 한 빌드 도구로 Ant, Maven과 가은 이전 세대 빌드 도구의 단점을 보완하고 장점을 취합하여 만든 빌드 도구이다. build.gradle 파일에는 프로젝트를 위해 필요한 플러그인과 라이브러리 등을 기술한다.
+
+NOTE: 나머지 디텍터리와 파일등은 자동 생성되거나 크게 중요하지 않은 것들이라 생략
