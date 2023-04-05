@@ -1,0 +1,341 @@
+= README
+:toc:
+:icons: font
+:toclevels: 3
+:imagesdir: src/main/resources/static/img
+:source-highlighter:
+:docdate: 2023-04-03
+:doctype:book
+:sectlinks:
+
+REFR::
+* https://wikidocs.net/book/7601[점프 투 스프링부트]
+
+
+== Basic
+
+=== Controller
+
+페이지 요청이 발생하면 스프링부트는 가장 먼저 ``컨트롤러``에 요청된 페이지의 **URL 매핑**이 있는지를 조사한다.
+
+[source,java]
+[#code1]
+----
+package com.example.sbb;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/sbb")
+    public void index() {
+        System.out.println("index");
+    }
+}
+
+----
+`MainController` 클래스에 `@Controller` 어노테이션을 적용하면 `MainController` 클래스는 스프링부트의 컨트롤러가 된다. +
+그리고 매서드의 `@GetMapping` 어노테이션은 요청된 ``URL과의 매핑``을 담당한다. +
+서버에 요청이 발생하면 스프링부트는 요청 페이지와 **매핑되는 메서드**를 **컨트롤러를 대상**으로 찾는다. +
+즉 스프링부트는 `http://localhost:8080/sbb` 요청이 발생하면 `/sbb` URL과 매핑되는 index 메서드를 `MainController` 클래스에서 찾아 실행한다.
+
+.<<#code1>> 실행시 에러
+image::adoc/controller_content_2.png[Error2]
+
+다만 응답코드가 ``404에러``에서 ``500에러``로 변경되었다. +
+`http://localhost:8080/sbb` 호출시 ``MainController``의 `index` 함수는 호출되었지만 +
+URL과 매핑된 함수는 결괏값을 리턴해야하는데 아무 값을 리턴하지않아서 에러가 발생한것이다.
+
+[source, java]
+[#code2]
+----
+package com.example.sbb;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class MainController {
+
+    @GetMapping("/sbb")
+    @ResponseBody
+    public String index() {
+
+        return "index";
+
+    }
+}
+
+----
+
+<<code2>>에서 응답으로 "index"라는 문자열을 브라우저에 출력하기위해 index함수의 리턴값을 String 으로 변경하고 "index"라는 문자열을 리턴했다. `@ResponseBody` 어노테이셔은 **URL 요청에 대한 응답**으로 **문자열을 리턴**하라는 의미이다.
+
+NOTE: 만약 `@ResponseBody` 어노테이션을 생략한다면 "index"라는 이름의 템플릿 파일을 찾게된다.
+
+=== JPA & Mybatis
+
+image::adoc/JPA_content_1.png[]
+
+#### JPA (ORM)
+스프링부트는 ``JPA(Java Persistence API)``를 사용하여 데이터 베이스를 처리한다. +
+JPA는 자바 진영에서 ``ORM(Object-Relational Mapping)``의 기술 표준으로 사용하는 인터페이스의 모음이다.
+
+TIP: JPA는 인터페이스이다. 따라서 인터페이스를 구현하는 실제 클래스가 필요하다. +
+JPA를 구현한 대표적인 실제 클래스에는 ``하이버네이트(Hibernate)``가 있다. +
+SBB도 JPA + 하이버네이트 조합을 사용한다.
+
+==== ORM
+
+[%header%autowidth]
+.question 테이블 구성 예
+|===
+|id | subject | content
+
+|1
+|안녕하세요
+|가입인사드립니다.^^
+
+|2
+|질문 있습니다.
+|ORM이 궁금합니다.
+
+| ...
+| ...
+| ...
+
+|===
+
+보통 데이터를 삽이하는 쿼리르 <<code3>> 처럼 작성한다.
+[source, sql]
+[#code3]
+----
+insert into question (subject, content) values ("안녕하세요", "가입인사드립니다.^^");
+insert into question (subject, content) values ("질문 있습니다.", "ORM이 궁금합니다.");
+----
+
+위 코드를 ORM을 사용하면 쿼리대신 자바 코드로 다음처럼 작성할수있다.
+
+[source, java]
+[#code4]
+----
+
+Question q1 = new Question();
+q1.setSubject("안녕하세요");
+q1.setContent("가입인사드립니다.^^");
+this.questionRepository.save(q1);
+
+
+Question q2 = new Question();
+q2.setSubject("질문 있습니다.");
+q2.setContent("ORM이 궁금합니다.");
+this.questionRepository.save(q2);
+----
+위와 같이 ORM을 이용한 데이터의 삽입예제는 코드 자체만 놓고 보면 양이많아 보이지만 +
+별도의 SQL문법을 배우지 않아도 되는 장점이있다.
+
+ORM의 장점::
+- 일관된 코드를 유지할수있어서 프로그램을 유지 보수하기가 편리하다.
+- 내부에서 안전한 SQL 쿼리를 자동으로 생성해 주므로 개발자가 달라도 통일된 쿼리를 작성할 수있고 오류 발생률도 줄일수 있다.
+
+<<<<<<< Updated upstream:NOTE.adoc
+#### JPA란?
+스프링부트는 ``JPA(Java Persistence API)``를 사용하여 데이터 베이스를 처리한다. +
+JPA는 자바 진영에서 ``ORM(Object-Relational Mapping)``의 기술 표준으로 사용하는 인터페이스의 모음이다.
+=======
+==== Mybatis (SQL Mapper)
+Mybatis도 데이터 베이스를 처리할때 사용한다. +
+SQL Mapper로 써 Object와 SQL의 필드를 매핑하여 데이터를 객체화 하는 기술 +
+
+
+TIP: SQL 문을 직접 작성하고 쿼리 수행 결과를 어떠한 객체에 매핑할지 바인딩 하는 방법
+
+. application.properties 추가
+
+==== SQL Mapper
+- 객체와 테이블 간의 관계를 매핑하는것이 아닌 SQL문을 직접작성하고 쿼리 수행 결과를 어떠한 객체에 매핑할지 바인딩하는 기법
+- DBMS에 종속적인 문제
+- 복잡한 쿼리를 사용할때 이점이있다.
+
+==== SQL Mapper vs ORM
+
+.SQL Mapper vs ORM
+|===
+| 명칭 | 개념 | 종속
+
+| SQL Mapper
+| Object와 SQL 필드를 매핑하여 데이터를 객체화 하는 기술
+| DBMS에 종속적인 문제
+
+| ORM
+| Object와 DB테이블을 매핑하여 데이터를 객체화 하는 기술
+| DBMS에 종속적이지 않음
+
+|===
+
+== Entity
+>>>>>>> Stashed changes:README.adoc
+
+엔티티(Entity)는 데이터베이스 테이블과 매핑되는 자바 클래스를 말한다.
+
+TIP: 엔티티는 모델 또는 도메인 모델이라고 부르기도한다.
+
+
+
+== Anotation
+
+// [cols=3*] 컬럼 지정
+// [%header,format=csv] %header=1행을 강조, format=csv =테이블 포맷팅변환
+// [cols="1,5a,1"] 컬럼 너비지정 및 asciidoc 컨텐츠 추가(a)
+
+=== Controller
+// [cols="1,5,1"]
+[%header%autowidth]
+.Controller
+|===
+| 이름 | 용도 | 경로
+
+| @Controller
+| 해당 어노테이션의 클래스가 컨트롤러의 기능을 수행
+| org.springframework.stereotype.Controller
+
+| @GetMapping(`URL명`)
+| 위 경로로 URL요청이 발생하면 해당 어노테이션의 메서드가 실행, 경로와 메서드를 매핑footnote:[URL명과 메서드명은 동일할 필요는 없다]footnote:[Get방식의 요청은 GetMapping, Post방식의 요청은 PostMapping]
+| org.springframework.web.bind.annotation.GetMapping
+
+| @ResponseBody
+| return body 만들어서 보낼때 사용
+| org.springframework.web.bind.annotation.ResponseBody
+
+| @Getterfootnoteref:[lombok,required: lombok]
+| Getter 메서드를 추가하지않아도 `get변수명`(파스칼표기)을 사용할수있다.
+| lombok.Getter
+
+| @Setterfootnoteref:[lombok]
+| Setter 메서드를 추가하지않아도 `set변수명`(파스칼표기) 사용할수있다.
+| lombok.Setter
+
+| @RequiredArgsConstructor footnoteref:[lombok]
+| 해당 속성을 필요로하는 생성자가 롬복에 의해 자동으로 생성된다._**(final이 없는 속성은 생성자에 포함되지않는다.)**_
+| lombok.RequiredArgsConstructor
+
+
+|===
+
+== Library
+Spring Boot Devtools::
+* 서버 재시작 없이도 코드변경사항을 적용해준다.
+* dependencies
++
+
++
+====
+developmentOnly 'org.springframework.boot:spring-boot-devtools'
+====
+
+
+lombok(롬복)footnote:[plugin설치,File->Settings->Build,Exceution,Deployment->Compiler+->Annotation Processors에서 Enable annotation processing 체크]::
+* 자바 클래스에 Getter, Setter, 생성자 등을 자동으로 만들어주는도구이다.
+* dependencies
++
+
++
+====
+compileOnlyfootnote:[해당 라이브러리가 컴파일 단계에서만 필요한 경우에 사용한다.] 'org.projectlombok:lombok'
+====
++
+====
+annotationProcessorfootnote:[컴파일 단계에서 어노테이션을 분석하고 처리하기 위해 사용한다.] 'org.projectlombok:lombok'
+====
+
+
+tibero::
+https://github.com/DongGiLee/Tibero/blob/main/README.adoc[Tibero ]
+* dependencies
++
+====
+implementation files("libs/tibero6-jdbc-14.jar")
+====
+
++
+
+* application.properties
++
+====
+spring.datasource.url=*jdbc:tibero:thin:@[host]:[port]:[DB Name]* +
+spring.datasource.username=*[account]* +
+spring.datasource.password=*[password]* +
+spring.datasource.driver-class-name=com.tmax.tibero.jdbc.TbDriver +
+====
+
+mybatis::
+* dependencies
++
+====
+implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
+====
++
+CAUTION: java 17 이라면 3.x버전 +
+java 8 이라면 2.x 버전
+
+* application.properties
++
+====
+mybatis.config-location=classpath:mybatis-config.xml +
+mybatis.mapper-locations=mappers/*.xml +
+====
+
+
+== Struct
+
+src/main/java 디렉터리::
+link:src/main/java/[src/main/java 디렉터리]의 `com.mysite.sbb` 패키지는 **자바파일을 작성하는 공간**이다. +
+자바 파일로는 link:src/main/java/com/example/sbb/HelloController.java[HelloController]와 같은 스프링부트의 *컨트롤러*, *폼과 DTO*, *데이터베이스 처리를 위한 엔티티*, *서비스 파일* 등이있다.
+
+
+SbbApplication.java 파일::
+시작을 담당하는 파일이다. link:src/main/java/com/example/sbb/SbbApplication.java[<프로젝트명>+Application.java] +
+스프링부트 프로젝트를 생성할때 "Sbb"라는 이름을 사용하면 다음과같은 SbbApplication.java 파일이 자동으로 생성된다.
+
+[source,java]
+----
+package com.mysite.sbb;
+
+import org.springframework.boot.SpringAcpplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SbbApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SbbApplication.class, args);
+    }
+}
+----
+SbbApplication 클래스에는 위와 같이 반드시 `@SpringBootApplication` 어노테이션이 적용되어야한다. +
+@SpringBootApplication 어노테이션을 통해 스프링부트의 모든 설정이 관리된다.
+
+src/main/resources 디렉터리::
+link:src/main/resources[src/main/resource 디렉터리]는 자바 파일을 제외한 *HTML*, *CSS*, *Javascript*, *환경파일* 등을 작성하는 공간이다.
+
+templates 디렉터리::
+link:src/main/resources/templates/[src/main/resources/templates 디렉터리]에는 템플릿 파일을 저장한다. +
+``템플릿 파일``은 **HTML 파일 형태로 자바 객체와 연동되는 파일**이다. +
+templates 디렉터리에는 SBB의 *질문 목록*, **질문 상세**등의 **HTML 파일**을 저장한다.
+
+static 디렉터리::
+link:src/main/resources/static/[static 디렉터리]는 SBB 프로젝트의 *스타일시트(.css)* *자바 스크립트(.js)* 그리고 *이미지 파일 (.jpg, png)* 등을 저장하는 공간이다.
+
+application.properties 파일::
+link:src/main/resources/application.properties[application.properties 파일]은 SBB 프로젝트의 환경을 설정한다. *SBB 프로젝트의 환경*, **데이터베이스 등의 설정**을 이파일에 저장한다.
+
+src/test/java 디렉터리::
+link:src/test/java/[src/test/java 디렉터리]는 SBB 프로젝트에서 작성한 파일을 테스트하기 위한 테스트 코드를 작성하는 공간이다. +
+JUint과 스프링부트의 테스팅 도구를 사용하여 서버를 실행하지 않은 상태에서 src/main/java 디렉터리에 작성한 코드를 테스트할 수 있다.
+
+build.gradle 파일::
+그레이들(Gradle)이 사용하는 환경 파일이다. 그레이들은 그루비(Groovy)를 기반으로 한 빌드 도구로 Ant, Maven과 가은 이전 세대 빌드 도구의 단점을 보완하고 장점을 취합하여 만든 빌드 도구이다. build.gradle 파일에는 프로젝트를 위해 필요한 플러그인과 라이브러리 등을 기술한다.
+
+NOTE: 나머지 디텍터리와 파일등은 자동 생성되거나 크게 중요하지 않은 것들이라 생략

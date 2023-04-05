@@ -18,7 +18,12 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
+	implementation files("libs/tibero6-jdbc-14.jar")
+
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()
